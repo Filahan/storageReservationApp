@@ -17,10 +17,10 @@ export default function MapScreen() {
     <MapView
       style={styles.map}
       initialRegion={{
-        latitude: userLocation.latitude,
-        longitude: userLocation.longitude,
-        latitudeDelta: 5,
-        longitudeDelta: 5,
+        latitude: 48.8566,
+        longitude: 2.3522,
+        latitudeDelta: 2,
+        longitudeDelta: 2,
       }}
     >
       {/* <Marker coordinate={{ latitude: userLocation.latitude, longitude: userLocation.longitude }} title="Votre" pinColor="blue" /> */}

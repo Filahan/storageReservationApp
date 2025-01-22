@@ -23,16 +23,17 @@ export default function App() {
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ color, size }) => {
-              let iconName: keyof typeof Ionicons.glyphMap = route.name === "Listings" ? "list" : route.name === "Map" ? "map" : "settings";
+              let iconName: keyof typeof Ionicons.glyphMap = route.name === "Listings" ? "search" : route.name === "Map" ? "map-outline" : "settings-outline";
               return <Ionicons name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: "blue",
-            tabBarInactiveTintColor: "gray",
+            tabBarActiveTintColor: "#00000",
+            tabBarInactiveTintColor: "#BDBDBD",
           })}
         >
-          <Tab.Screen name="Listings" component={ListingsScreen} options={{ title: "Annonces" }} />
-          <Tab.Screen name="Map" component={MapScreen} options={{ title: "Carte" }} />
-          <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: "Paramètres" }} />
+          <Tab.Screen name="Listings" component={ListingsScreen}     options={{ tabBarLabel: () => null }} />
+          <Tab.Screen name="Map" component={MapScreen}     options={{ tabBarLabel: () => null }}/>        
+          <Tab.Screen name="Settings" component={SettingsScreen}    options={{ tabBarLabel: () => null }}  // Enlever le label
+ />
         </Tab.Navigator>
       </NavigationContainer>
     </StorageProvider>
