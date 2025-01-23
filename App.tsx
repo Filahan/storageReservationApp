@@ -11,6 +11,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 export type RootTabParamList = {
   Listings: undefined;
   Map: undefined;
+  Message: undefined;
   Settings: undefined;
 };
 
@@ -23,17 +24,33 @@ export default function App() {
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarIcon: ({ color, size }) => {
-              let iconName: keyof typeof Ionicons.glyphMap = route.name === "Listings" ? "search" : route.name === "Map" ? "map-outline" : "settings-outline";
+              let iconName: keyof typeof Ionicons.glyphMap =
+                route.name === "Listings"
+                  ? "home-outline"
+                  : route.name === "Map"
+                  ? "navigate-outline"
+                  : route.name === "Message"
+                  ? "chatbox-outline"
+                  : "settings-outline";
               return <Ionicons name={iconName} size={size} color={color} />;
             },
             tabBarActiveTintColor: "#00000",
             tabBarInactiveTintColor: "#BDBDBD",
+            // headerShown: false, // Supprime le header
+            headerStyle: {
+              height: 40, // Réduit la hauteur du header
+              elevation: 0, // Supprime l'ombre (Android)
+              shadowOpacity: 0, // Supprime l'ombre (iOS)
+              borderBottomWidth: 0, // Supprime la bordure inférieure            
+             }, // Ajustez la hauteur selon vos besoins
+            // tabBarShowLabel: false, // Supprime les labels des onglets
+            headerTitle: "", // Remove header title
           })}
         >
-          <Tab.Screen name="Listings" component={ListingsScreen}     options={{ tabBarLabel: () => null }} />
-          <Tab.Screen name="Map" component={MapScreen}     options={{ tabBarLabel: () => null }}/>        
-          <Tab.Screen name="Settings" component={SettingsScreen}    options={{ tabBarLabel: () => null }}  // Enlever le label
- />
+          <Tab.Screen name="Listings" component={ListingsScreen} />
+          <Tab.Screen name="Map" component={MapScreen} />
+          <Tab.Screen name="Message" component={MapScreen} />
+          <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </StorageProvider>
