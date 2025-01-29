@@ -101,18 +101,7 @@ export default function ListingsScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View style={styles.headerAction} />
-          <View style={styles.headerAction}>
-            <TouchableOpacity onPress={() => {}}>
-              <FeatherIcon color="#000" name="sliders" size={21} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Text style={styles.headerTitle}>Places to stay</Text>
-      </View>
-
-      <View style={styles.searchView}>
+        <View style={styles.searchView}>
         <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchBar}
@@ -124,6 +113,8 @@ export default function ListingsScreen() {
           <Ionicons name="calendar-outline" size={24} color="#888" style={styles.calendarIcon} />
         </TouchableOpacity>
       </View>
+      </View>
+
 
       <ScrollView contentContainerStyle={styles.content}>
         {filteredData.map((item: StorageListing) => {
@@ -181,20 +172,17 @@ export default function ListingsScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
+    height:70,
+    // paddingVertical: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:"white"
   },
   headerTop: {
     marginHorizontal: -6,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-  },
-  headerAction: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 32,
