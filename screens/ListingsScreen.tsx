@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from "r
 import { StorageContext } from "../context/StorageContext";
 import StorageModal from "./StorageModal";
 import Ionicons from "react-native-vector-icons/Ionicons"; // Import de l'icône
+import DateTimePickerModal from "react-native-modal-datetime-picker"; // Import du sélecteur de date
 
 export default function ListingsScreen({ }) {
   const context = useContext(StorageContext);
@@ -13,6 +14,8 @@ export default function ListingsScreen({ }) {
   const [filteredData, setFilteredData] = useState(listings);
   const [selectedListing, setSelectedListing] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const openModal = (listing:any) => {
     setSelectedListing(listing);
@@ -21,13 +24,36 @@ export default function ListingsScreen({ }) {
 
   const handleSearch = (query:any) => {
     setSearchQuery(query);
-    if (query.trim() === "") {
-      setFilteredData(listings);
-    } else {
-      setFilteredData(
-        listings.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()))
-      );
+    filterData(query, selectedDate);
+  };
+
+  const filterData = (query:any, date:any) => {
+    let filtered = listings;
+
+    // Filtrage par texte
+    if (query.trim() !== "") {
+      filtered = filtered.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()));
     }
+
+    // Filtrage par date
+    if (date) {
+      filtered = filtered.filter((item) => {
+        const itemDate = new Date(item.date); // Assurez-vous que chaque annonce ait une propriété 'date'
+        return itemDate.toDateString() === date.toDateString(); // Compare uniquement la date (pas l'heure)
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
+  const handleDateConfirm = (date:any) => {
+    setSelectedDate(date);
+    setDatePickerVisible(false);
+    filterData(searchQuery, date); // Refiltrer après avoir sélectionné la date
+  };
+
+  const handleDateCancel = () => {
+    setDatePickerVisible(false);
   };
 
   return (
@@ -41,6 +67,10 @@ export default function ListingsScreen({ }) {
           value={searchQuery}
           onChangeText={handleSearch}
         />
+        {/* Bouton de calendrier */}
+        <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
+          <Ionicons name="calendar-outline" size={24} color="#888"  style={styles.calendarIcon} />
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -57,6 +87,14 @@ export default function ListingsScreen({ }) {
 
       {/* Appel du modal */}
       <StorageModal visible={modalVisible} onClose={() => setModalVisible(false)} listing={selectedListing} />
+
+      {/* Sélecteur de date */}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleDateConfirm}
+        onCancel={handleDateCancel}
+      />
     </View>
   );
 }
@@ -69,16 +107,23 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 20,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // Ajout d'opacité au fond
     paddingHorizontal: 10,
     marginBottom: 10,
+    elevation: 0.1, // Supprime l'ombre (Android)
+    shadowOpacity: 0.1, // Supprime l'ombre (iOS)
+    opacity: 0.8, // Ajoute de l'opacité à l'ensemble du composant
   },
+  
   searchIcon: {
     marginRight: 8,
   },
   searchBar: {
     flex: 1,
     height: 50,
+  },
+  calendarIcon: {
+    marginLeft: 10,
   },
   card: { borderColor: "#D0D3D4", borderWidth:1, padding: 15, marginBottom: 10, borderRadius: 8, elevation: 3 },
   title: { fontSize: 18, fontWeight: "bold" },
