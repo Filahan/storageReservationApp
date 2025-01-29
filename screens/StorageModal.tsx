@@ -1,56 +1,94 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Dimensions, ScrollView } from "react-native";
-import Modal from "react-native-modal";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { StorageListing } from "../context/StorageContext"; // Importation du type depuis le contexte
 
 interface StorageModalProps {
   visible: boolean;
   onClose: () => void;
-  listing: {
-    name: string;
-    location: string;
-    price: string;
-  } | null;
+  listing: StorageListing | null; // Utilisation du type du contexte
 }
 
-const StorageModal: React.FC<StorageModalProps> = ({ visible, onClose, listing }) => {
-  if (!listing) return null; // Ne pas afficher si aucune annonce sélectionnée
+export default function StorageModal({ visible, onClose, listing }: StorageModalProps) {
+  if (!listing) return null;
 
   return (
-    <Modal
-      isVisible={visible}
-      swipeDirection="down"
-      onSwipeComplete={onClose}
-      onBackdropPress={onClose}
-      style={styles.modal}
-    >
-      <View style={styles.modalContent}>
-        <View style={styles.modalHeader}>
+    <Modal visible={visible} transparent={true} animationType="slide">
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Image source={{ uri: listing.img }} style={styles.modalImage} />
           <Text style={styles.modalTitle}>{listing.name}</Text>
-          <Button title="Fermer" onPress={onClose} />
-        </View>
-
-        <ScrollView style={styles.modalBody}>
-          <Text>📍 {listing.location}</Text>
-          <Text>💰 {listing.price}</Text>
-          <Text style={styles.modalText}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla at magna auctor, pharetra quam id, fermentum justo.
-            Duis tempor cursus risus, nec feugiat justo sagittis vel.
+          <Text style={styles.modalLocation}>{listing.location}</Text>
+          <Text style={styles.modalPrice}>{listing.price}</Text>
+          <Text style={styles.modalDates}>{listing.dates}</Text>
+          <Text style={styles.modalRating}>
+            <Ionicons name="star" size={16} color="#ea266d" /> {listing.rating} ({listing.reviews} reviews)
           </Text>
-        </ScrollView>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.closeButtonText}>Fermer</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
-};
+}
 
-const { height } = Dimensions.get("window");
-
+// Les styles restent identiques
 const styles = StyleSheet.create({
-  modal: { justifyContent: "flex-end", margin: 0 },
-  modalContent: { backgroundColor: "white", height: height * 0.9, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 },
-  modalHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
-  modalTitle: { fontSize: 20, fontWeight: "bold" },
-  modalBody: { flex: 1 },
-  modalText: { marginTop: 10, fontSize: 16, lineHeight: 24 },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  modalLocation: {
+    fontSize: 16,
+    color: "#595a63",
+    marginBottom: 10,
+  },
+  modalPrice: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#232425",
+    marginBottom: 10,
+  },
+  modalDates: {
+    fontSize: 16,
+    color: "#595a63",
+    marginBottom: 10,
+  },
+  modalRating: {
+    fontSize: 16,
+    color: "#232425",
+    marginBottom: 10,
+  },
+  closeButton: {
+    backgroundColor: "#ea266d",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
-
-export default StorageModal;
