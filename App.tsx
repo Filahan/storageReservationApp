@@ -6,7 +6,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { StorageProvider } from "./context/StorageContext";
 import ListingsScreen from "./screens/ListingsScreen/ListingsScreen";
-import MapScreen from "./screens/MapScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import MessageScreen from "./screens/SettingsScreen";
 
@@ -44,7 +43,7 @@ const screenOptions = ({ route }: { route: { name: keyof RootTabParamList } }) =
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f2f2f2',
   },
   headerTitle: "",
   tabBarStyle: {
@@ -66,7 +65,6 @@ export default function App() {
       <NavigationContainer>
         <Tab.Navigator screenOptions={screenOptions}>
           <Tab.Screen name="Listings" component={ListingsScreen} />
-          <Tab.Screen name="Map" component={MapScreen} />
           <Tab.Screen name="Message" component={MessageScreen} />
           <Tab.Screen name="Settings" component={SettingsScreen} />
         </Tab.Navigator>

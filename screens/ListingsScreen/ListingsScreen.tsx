@@ -136,12 +136,16 @@ export default function ListingsScreen() {
                   </View>
                   <Image source={{ uri: item.img }} style={styles.cardImg} />
                   <View style={styles.cardBody}>
+                    <View style={{flexDirection: "row", justifyContent:"space-between"}}>
                     <Text style={styles.cardTitle}>{item.name}</Text>
+
                     <View style={styles.cardHeader}>
                       <FontAwesome name="star" color="#ea266d" size={12} />
                       <Text style={styles.cardStars}>{item.rating}</Text>
                       <Text style={styles.cardReviews}>({item.reviews} avis)</Text>
                     </View>
+                    </View>
+                    
                     <Text style={styles.cardDates}>{item.dates}</Text>
                     <Text style={styles.cardPrice}>{item.price}</Text>
                   </View>
@@ -182,8 +186,8 @@ export default function ListingsScreen() {
 
       <TouchableOpacity style={styles.floatingButton} onPress={toggleViewMode}>
         <FeatherIcon
-          name={viewMode === "list" ? "map" : "list"}
-          size={24}
+          name={viewMode === "list" ? "map" : "align-justify"}
+          size={21}
           color="#fff"
         />
       </TouchableOpacity>
@@ -211,14 +215,13 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingVertical: 16,
-    backgroundColor: "white",
   },
   searchView: {
     flexDirection: "row",
     alignItems: "center",
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: "#fff",
     paddingHorizontal: 12,
     marginHorizontal: 16,
@@ -296,18 +299,17 @@ const styles = StyleSheet.create({
   },
   cardPrice: {
     marginTop: 8,
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#ea266d",
+    fontSize: 15,
+    fontWeight: "600",
   },
   floatingButton: {
     position: "absolute",
     bottom: 30,
     right: 20,
-    backgroundColor: "black",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    backgroundColor: "#F4C95D",
+    width: 47,
+    height: 47,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
