@@ -18,10 +18,19 @@ export default function StorageModal({ visible, onClose, listing }: StorageModal
     const currentScrollPosition = event.nativeEvent.contentOffset.y;
     setScrollPosition(currentScrollPosition);
 
-    // Définir un seuil pour fermer le modal (par exemple, 50 pixels)
     if (currentScrollPosition < -80) {
       onClose();
     }
+  };
+
+  const handleSave = () => {
+    // Logique pour sauvegarder
+    console.log("Sauvegarder");
+  };
+
+  const handleShare = () => {
+    // Logique pour partager
+    console.log("Partager");
   };
 
   return (
@@ -36,6 +45,36 @@ export default function StorageModal({ visible, onClose, listing }: StorageModal
         <View style={styles.modalContent}>
           <View style={styles.handleIndicator}/>
           
+          {/* Header avec boutons */}
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.iconButton}
+
+              onPress={onClose}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="close" size={24} color="#666" />
+            </TouchableOpacity>
+
+            <View style={styles.rightButtons}>
+              <TouchableOpacity 
+                style={styles.iconButton}
+                onPress={handleSave}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="bookmark-outline" size={24} color="#666" />
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.iconButton}
+                onPress={handleShare}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="share-social-outline" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <ScrollView
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContent}
@@ -81,7 +120,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    // backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -103,7 +141,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     borderRadius: 2,
     alignSelf: 'center',
-    marginVertical: 10,
+    marginTop: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+  },
+  rightButtons: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  iconButton: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 6,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   scrollContainer: {
     flex: 1,

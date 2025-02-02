@@ -125,12 +125,12 @@ export default function ListingsScreen() {
                   <View style={styles.cardSaveWrapper}>
                     <TouchableOpacity onPress={() => handleSave(item.id)}>
                       <View style={styles.cardSave}>
-                        <FontAwesome
-                          color={isSaved ? "#ea266d" : "#222"}
-                          name="bookmark"
-                          solid={isSaved}
-                          size={20}
-                        />
+                      <Ionicons
+                        color={isSaved ? "#ea266d" : "#666"}
+                        name={isSaved ? "bookmark" : "bookmark-outline"}
+                        size={24}
+                      />
+
                       </View>
                     </TouchableOpacity>
                   </View>
@@ -255,12 +255,17 @@ const styles = StyleSheet.create({
     right: 12,
   },
   cardSave: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 35,
+    height: 35,
+    borderRadius: 10,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   cardImg: {
     width: "100%",
