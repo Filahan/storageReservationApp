@@ -1,5 +1,5 @@
-import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { StorageListing } from "../context/StorageContext";
 
@@ -10,7 +10,19 @@ interface StorageModalProps {
 }
 
 export default function StorageModal({ visible, onClose, listing }: StorageModalProps) {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
   if (!listing) return null;
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentScrollPosition = event.nativeEvent.contentOffset.y;
+    setScrollPosition(currentScrollPosition);
+
+    // Définir un seuil pour fermer le modal (par exemple, 50 pixels)
+    if (currentScrollPosition < -80) {
+      onClose();
+    }
+  };
 
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
@@ -28,6 +40,7 @@ export default function StorageModal({ visible, onClose, listing }: StorageModal
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
+            onScroll={handleScroll}
           >
             <Image 
               source={{ uri: listing.img }} 
@@ -77,7 +90,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: '85%',
+    minHeight: '70%',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
   },
   handleIndicator: {
     width: 40,
