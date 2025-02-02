@@ -4,19 +4,18 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   Image,
   SafeAreaView,
   ScrollView,
-  Platform,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import { StorageContext } from "../../context/StorageContext";
 import StorageModal from "../StorageModal";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Search from "../../components/Search";
 
 export interface StorageListing {
   id: number;
@@ -100,52 +99,44 @@ export default function ListingsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.searchView}>
-          <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Rechercher une annonce..."
-            value={searchQuery}
-            onChangeText={handleSearch}
-          />
-          <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
-            <Ionicons name="calendar-outline" size={24} color="#888" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <Search
+        searchQuery={searchQuery}
+        onSearchChange={handleSearch}
+        onDatePress={() => setDatePickerVisible(true)}
+      />
 
       {viewMode === "list" ? (
         <ScrollView contentContainerStyle={styles.content}>
           {filteredData.map((item) => {
             const isSaved = saved.includes(item.id);
             return (
-              <TouchableOpacity key={item.id} onPress={() => openModal(item)}>
+              <TouchableOpacity 
+                key={item.id} 
+                onPress={() => openModal(item)}
+                activeOpacity={0.9}
+              >
                 <View style={styles.card}>
                   <View style={styles.cardSaveWrapper}>
                     <TouchableOpacity onPress={() => handleSave(item.id)}>
                       <View style={styles.cardSave}>
-                      <Ionicons
-                        color={isSaved ? "#ea266d" : "#666"}
-                        name={isSaved ? "bookmark" : "bookmark-outline"}
-                        size={24}
-                      />
-
+                        <Ionicons
+                          color={isSaved ? "#ea266d" : "#666"}
+                          name={isSaved ? "bookmark" : "bookmark-outline"}
+                          size={24}
+                        />
                       </View>
                     </TouchableOpacity>
                   </View>
                   <Image source={{ uri: item.img }} style={styles.cardImg} />
                   <View style={styles.cardBody}>
-                    <View style={{flexDirection: "row", justifyContent:"space-between"}}>
-                    <Text style={styles.cardTitle}>{item.name}</Text>
-
                     <View style={styles.cardHeader}>
-                      <FontAwesome name="star" color="#ea266d" size={12} />
-                      <Text style={styles.cardStars}>{item.rating}</Text>
-                      <Text style={styles.cardReviews}>({item.reviews} avis)</Text>
+                      <Text style={styles.cardTitle}>{item.name}</Text>
+                      <View style={styles.ratingContainer}>
+                        <FontAwesome name="star" color="#ea266d" size={12} />
+                        <Text style={styles.cardStars}>{item.rating}</Text>
+                        <Text style={styles.cardReviews}>({item.reviews})</Text>
+                      </View>
                     </View>
-                    </View>
-                    
                     <Text style={styles.cardDates}>{item.dates}</Text>
                     <Text style={styles.cardPrice}>{item.price}</Text>
                   </View>
@@ -156,7 +147,6 @@ export default function ListingsScreen() {
         </ScrollView>
       ) : (
         <MapView
-          // provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
             latitude: 48.8566,
@@ -178,7 +168,6 @@ export default function ListingsScreen() {
                 <Text style={styles.markerPrice}>{item.price}</Text>
                 <View style={styles.markerArrow} />
               </View>
-             
             </Marker>
           ))}
         </MapView>
@@ -186,7 +175,7 @@ export default function ListingsScreen() {
 
       <TouchableOpacity style={styles.floatingButton} onPress={toggleViewMode}>
         <FeatherIcon
-          name={viewMode === "list" ? "map" : "align-justify"}
+          name={viewMode === "list" ? "map" : "list"}
           size={21}
           color="#fff"
         />
@@ -212,27 +201,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f2f2f2",
-  },
-  header: {
-    paddingVertical: 16,
-  },
-  searchView: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    paddingHorizontal: 12,
-    marginHorizontal: 16,
-    height: 50,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchBar: {
-    flex: 1,
-    fontSize: 16,
   },
   content: {
     paddingTop: 8,
@@ -276,15 +244,21 @@ const styles = StyleSheet.create({
   cardBody: {
     padding: 12,
   },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#1d1d1d",
+    maxWidth: "70%",
   },
-  cardHeader: {
+  ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6,
   },
   cardStars: {
     marginLeft: 4,
@@ -298,14 +272,14 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   cardDates: {
-    marginTop: 4,
     fontSize: 14,
     color: "#666",
+    marginBottom: 4,
   },
   cardPrice: {
-    marginTop: 8,
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#2a2a2a",
   },
   floatingButton: {
     position: "absolute",
@@ -349,13 +323,5 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ea266d",
     transform: [{ rotate: "180deg" }],
     marginTop: -2,
-  },
-  markerImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginTop: 8,
-    borderWidth: 2,
-    borderColor: "#fff",
   },
 });

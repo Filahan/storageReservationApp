@@ -18,9 +18,9 @@ export default function StorageModal({ visible, onClose, listing }: StorageModal
     const currentScrollPosition = event.nativeEvent.contentOffset.y;
     setScrollPosition(currentScrollPosition);
 
-    if (currentScrollPosition < -80) {
-      onClose();
-    }
+    // if (currentScrollPosition < -80) {
+    //   onClose();
+    // }
   };
 
   const handleSave = () => {
