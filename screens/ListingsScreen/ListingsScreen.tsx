@@ -1,4 +1,5 @@
-import React, { useContext, useState, useCallback } from "react";
+// ListingsScreen.tsx
+import React, { useState, useCallback, useContext } from "react";
 import {
   View,
   Text,
@@ -7,15 +8,16 @@ import {
   Image,
   SafeAreaView,
   ScrollView,
+  Modal,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { StorageContext } from "../../context/StorageContext";
-import StorageModal from "../StorageModal";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome5";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Search from "../../components/Search";
+import Search, { Filters } from "../../components/Search";
+import { StorageContext } from "../../context/StorageContext";
+import StorageModal from "../StorageModal";
 
 export interface StorageListing {
   id: number;
@@ -30,7 +32,6 @@ export interface StorageListing {
   rating: number;
   reviews: number;
 }
-
 interface StorageContextType {
   listings: StorageListing[];
 }
@@ -38,15 +39,18 @@ interface StorageContextType {
 export default function ListingsScreen() {
   const context = useContext(StorageContext) as unknown as StorageContextType;
   const { listings } = context;
-  
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filteredData, setFilteredData] = useState<StorageListing[]>(listings);
   const [selectedListing, setSelectedListing] = useState<StorageListing | null>(null);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [isDatePickerVisible, setDatePickerVisible] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState<string>("");
   const [saved, setSaved] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [filters, setFilters] = useState<Filters>({
+    location: '',
+    startDate: undefined,
+    endDate: undefined,
+    maxPrice: '',
+  });
 
   const toggleViewMode = useCallback(() => {
     setViewMode((prev) => (prev === "list" ? "map" : "list"));
@@ -57,35 +61,47 @@ export default function ListingsScreen() {
     setModalVisible(true);
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    filterData(query, selectedDate);
-  };
 
-  const filterData = (query: string, date: string) => {
+
+  const filterData = (query: string, filters: Filters) => {
     let filtered = listings;
 
-    if (query.trim() !== "") {
-      filtered = filtered.filter((item) =>
-        item.name.toLowerCase().includes(query.toLowerCase())
+
+    // Filtre par localisation
+    if (filters.location.trim() !== "") {
+      filtered = filtered.filter(item =>
+        item.location.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
-    if (date) {
-      const selected = new Date(date);
-      filtered = filtered.filter((item) => {
+    // Filtre par date
+    if (filters.startDate && filters.endDate) {
+      filtered = filtered.filter(item => {
         const itemDate = new Date(item.date);
-        return itemDate.toDateString() === selected.toDateString();
+        return itemDate >= filters.startDate! && itemDate <= filters.endDate!;
+      });
+    }
+
+    // Filtre par prix
+    if (filters.maxPrice) {
+      const maxPrice = parseFloat(filters.maxPrice);
+      filtered = filtered.filter(item => {
+        const itemPrice = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+        return itemPrice <= maxPrice;
       });
     }
 
     setFilteredData(filtered);
   };
 
-  const handleDateConfirm = (date: Date) => {
-    setSelectedDate(date.toISOString());
-    setDatePickerVisible(false);
-    filterData(searchQuery, date.toISOString());
+  const handleFilterApply = (newFilters: Filters) => {
+    setFilters(newFilters);
+    filterData(searchQuery, newFilters);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({ location: '', maxPrice: '' });
+    filterData(searchQuery, { location: '', maxPrice: '' });
   };
 
   const handleSave = useCallback(
@@ -100,9 +116,8 @@ export default function ListingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Search
-        searchQuery={searchQuery}
-        onSearchChange={handleSearch}
-        onDatePress={() => setDatePickerVisible(true)}
+        onFilterApply={handleFilterApply}
+        onResetFilters={handleResetFilters}
       />
 
       {viewMode === "list" ? (
@@ -187,12 +202,12 @@ export default function ListingsScreen() {
         listing={selectedListing}
       />
 
-      <DateTimePickerModal
+      {/* <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleDateConfirm}
         onCancel={() => setDatePickerVisible(false)}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
@@ -323,5 +338,35 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ea266d",
     transform: [{ rotate: "180deg" }],
     marginTop: -2,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  modalImage: {
+    width: '100%',
+    height: 300,
+    borderRadius: 12,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginVertical: 15,
+  },
+  modalLocation: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 10,
+  },
+  modalPrice: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2a2a2a',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
   },
 });
